@@ -31,8 +31,3 @@ http://127.0.0.1:5000/generate-questions?product_name=Organic%20Mango&answers=Ha
 
 # ✅ Transparency Score (GET)
 http://127.0.0.1:5000/transparency-score?product_name=Organic%20Mango&answers=Harvested%20in%20Kerala&answers=Certified%20Organic
-
-# 📷 Screenshots
-# Home Endpoint: https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/refs/heads/main/output.png
-# Generate Questions: https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/refs/heads/main/Screenshot%20(390).png
-# Transparency Score: https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/refs/heads/main/Screenshot%20(391).png
