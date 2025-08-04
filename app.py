@@ -1,20 +1,27 @@
-from flask import Flask, request, jsonify
+import gradio as gr
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-#Load model
+# Load model
 model_name = "google/flan-t5-small"
 tokenizer = T5Tokenizer.from_pretrained(model_name)
 model = T5ForConditionalGeneration.from_pretrained(model_name)
 
-app = Flask(__name__)
-
-#Dynamic Question Generation
-def generate_dynamic_question(product_name, previous_answers=[]):
+# Question generation logic
+def generate_dynamic_question(product_name, previous_answers=""):
+    previous_answers = [a.strip() for a in previous_answers.split(",") if a.strip()]
     prev_text = ", ".join(previous_answers) if previous_answers else "None"
+
     instruction = (
-        "Generate ONE intelligent follow-up question for a Product Transparency Form. "
-        "Focus on origin, sourcing, ethical production, certifications, sustainability, or ingredients."
+        "You are an assistant that generates ONE intelligent follow-up question for a Product Transparency Form.\n\n"
+        "Rules:\n"
+        "1. Only ONE question — no lists or multiple-choice.\n"
+        "2. Focus ONLY on: origin, sourcing, ethical production, certifications, sustainability, or ingredients.\n"
+        "3. Avoid repeating known information already in the previous answers.\n"
+        "4. No generic or quiz-style questions (e.g., 'Which of the following…', 'Is this a product?').\n"
+        "5. Use professional tone and proper grammar.\n\n"
+        "---"
     )
+
     examples = """
     Product: Organic Mango. Previous answers: None
     Follow-up Question: Where were these mangoes grown, and are they certified organic?
@@ -25,24 +32,27 @@ def generate_dynamic_question(product_name, previous_answers=[]):
     Product: Grass-Fed Cow Milk. Previous answers: Cows are grass-fed year-round
     Follow-up Question: Is this milk certified grass-fed, and are the cows given any supplementary feed?
     """
+
     input_text = f"""{instruction}
 
-    {examples}
+{examples}
 
-    Product: {product_name}. Previous answers: {prev_text}
-    Follow-up Question:"""
+Product: {product_name}. Previous answers: {prev_text}
+Follow-up Question:"""
 
     inputs = tokenizer.encode(input_text, return_tensors="pt", truncation=True)
     outputs = model.generate(inputs, max_length=80, num_beams=4, early_stopping=True)
     return tokenizer.decode(outputs[0], skip_special_tokens=True)
 
-# Transparency Score Logic
+
+# Transparency score logic
 origin_keywords = ["grown", "harvested", "produced", "origin", "farm", "region", "country"]
 certification_keywords = ["certified", "organic", "fair trade", "verified"]
 sustainability_keywords = ["pesticide-free", "sustainably", "eco-friendly", "ethical", "grass-fed"]
 ingredient_keywords = ["ingredients", "composition", "contains", "made of"]
 
-def calculate_transparency_score(product_name, previous_answers):
+def calculate_transparency_score(product_name, previous_answers=""):
+    previous_answers = [a.strip() for a in previous_answers.split(",") if a.strip()]
     text = " ".join(previous_answers).lower()
     score = 0
     if any(word in text for word in origin_keywords): score += 25
@@ -59,39 +69,34 @@ def calculate_transparency_score(product_name, previous_answers):
     else:
         msg = "No transparency data provided."
 
-    return {"product_name": product_name, "transparency_score": score, "message": msg}
+    return f"Transparency Score: {score}/100\n{msg}"
 
-# Home Route
-@app.route("/")
-def home():
-    return "<h2>✅ Product Transparency API is Running</h2><p>Use /generate-questions or /transparency-score</p>"
+# Gradio UI
+question_interface = gr.Interface(
+    fn=generate_dynamic_question,
+    inputs=[
+        gr.Textbox(label="Product Name"),
+        gr.Textbox(label="Previous Answers (comma-separated)"),
+    ],
+    outputs="text",
+    title="🧠 Intelligent Follow-up Question Generator",
+    description="Generate a smart question based on product info and previous answers."
+)
 
-#Generate Questions Endpoint
-@app.route("/generate-questions", methods=["GET", "POST"])
-def generate_questions():
-    if request.method == "POST":
-        data = request.json
-        product_name = data.get("product_name", "")
-        previous_answers = data.get("previous_answers", [])
-    else:  # GET method
-        product_name = request.args.get("product_name", "")
-        previous_answers = request.args.getlist("answers")
+score_interface = gr.Interface(
+    fn=calculate_transparency_score,
+    inputs=[
+        gr.Textbox(label="Product Name"),
+        gr.Textbox(label="Previous Answers (comma-separated)"),
+    ],
+    outputs="text",
+    title="📊 Transparency Score Calculator",
+    description="Calculate how transparent a product's info is."
+)
 
-    question = generate_dynamic_question(product_name, previous_answers)
-    return jsonify({"product_name": product_name, "follow_up_question": question})
+demo = gr.TabbedInterface(
+    interface_list=[question_interface, score_interface],
+    tab_names=["Generate Follow-up Question", "Transparency Score"]
+)
 
-# Transparency Score Endpoint
-@app.route("/transparency-score", methods=["GET", "POST"])
-def transparency_score():
-    if request.method == "POST":
-        data = request.json
-        product_name = data.get("product_name", "")
-        previous_answers = data.get("previous_answers", [])
-    else:  # GET method
-        product_name = request.args.get("product_name", "")
-        previous_answers = request.args.getlist("answers")
-
-    return jsonify(calculate_transparency_score(product_name, previous_answers))
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+demo.launch()
