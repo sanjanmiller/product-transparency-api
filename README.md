@@ -1,20 +1,22 @@
-# 🟢 Product Transparency API  
+# 🟢 Product Transparency Assistant
 
-This project is an **AI-powered Flask microservice** that generates dynamic follow-up questions for product transparency and calculates a transparency score based on user-provided answers.  
+This project is an **AI-powered Gradio app** that helps assess product transparency. It generates intelligent follow-up questions and calculates a transparency score based on user inputs.
 
 ## 📌 Features  
-✔️ **/generate-questions** → Generates intelligent product-specific follow-up questions using T5.  
-✔️ **/transparency-score** → Returns a transparency score based on provided answers.  
-✔️ Built with **Flask** and **Transformers (T5)**.  
+✔️ **Generate Follow-up Questions** – Context-aware and product-specific  
+✔️ **Transparency Score** – Quantifies information completeness  
+✔️ Powered by **Gradio** and **Transformers (FLAN-T5 Small)**  
 
 ---
 
-## 📷 Screenshots  
+## 🚀 Live Demo  
+👉 [Try the App on Hugging Face Spaces](https://huggingface.co/spaces/sanjanmiller/product-transparency-api)
 
-### 🏠 Home Endpoint  
-<img src="https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/main/output.png" width="600">
+---
 
-### ❓ Generate Questions  
+## 📷 Screenshots
+
+### 🧠 Generate Follow-up Question  
 <img src="https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/main/Screenshot%20(390).png" width="600">
 
 ### 📊 Transparency Score  
@@ -22,7 +24,7 @@ This project is an **AI-powered Flask microservice** that generates dynamic foll
 
 ---
 
-## 📌 How to Run
+## 📦 How to Run Locally
 
 ```bash
 # 1️⃣ Clone the repo
@@ -34,14 +36,3 @@ pip install -r requirements.txt
 
 # 3️⃣ Run the app
 python app.py
-
-# 4️⃣ Access the API in your browser or Postman:
-# ✅ Home
-http://127.0.0.1:5000/
-
-# ✅ Generate Questions (GET)
-http://127.0.0.1:5000/generate-questions?product_name=Organic%20Mango&answers=Harvested%20in%20Kerala
-
-# ✅ Transparency Score (GET)
-http://127.0.0.1:5000/transparency-score?product_name=Organic%20Mango&answers=Harvested%20in%20Kerala&answers=Certified%20Organic
-
