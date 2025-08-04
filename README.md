@@ -17,10 +17,10 @@ This project is an **AI-powered Gradio app** that helps assess product transpare
 ## 📷 Screenshots
 
 ### 🧠 Generate Follow-up Question  
-<img src="https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/main/Screenshot%20(390).png" width="600">
+<img src="https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/refs/heads/main/question.JPG" width="600">
 
 ### 📊 Transparency Score  
-<img src="https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/main/Screenshot%20(391).png" width="600">
+<img src="https://raw.githubusercontent.com/sanjanmiller/product-transparency-api/refs/heads/main/tscore.JPG" width="600">
 
 ---
 
