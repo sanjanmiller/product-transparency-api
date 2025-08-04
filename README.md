@@ -10,7 +10,7 @@ This project is an **AI-powered Gradio app** that helps assess product transpare
 ---
 
 ## 🚀 Live Demo  
-👉 [Try the App on Hugging Face Spaces](https://huggingface.co/spaces/sanjanmiller/product-transparency-api)
+👉 [Try the App on Hugging Face Spaces](https://huggingface.co/spaces/sanjanmiller/product-transparency-app)
 
 ---
 
